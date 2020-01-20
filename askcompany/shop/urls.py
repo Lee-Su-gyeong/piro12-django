@@ -3,13 +3,21 @@ from .converters import FourDigitYearConverter
 from . import views
 
 
-register_converter(FourDigitYearConverter, 'yyyy')
-
-app_name = 'shop'
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
 
 urlpatterns = [
-    path('archives/<yyyy:year>/', views.archives_year),
-    path('', views.item_list),
-    path('<int:pk>/', views.item_detail),
-    # re_path(r'^(?P<pk>\d+)/$', views.item_detail),
+    path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls')),
+    path('shop/', include('shop.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ]
